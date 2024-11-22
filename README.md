@@ -14,7 +14,7 @@ Tema: Análise de tendências musicais.
 > Relacione artistas populares com as músicas mais tocadas no Spotify.
 > Extraia insights, como gêneros em alta ou artistas mencionados nas notícias.
 
-####Load:
+#### Load:
 > Salve em um banco (PostgreSQL ou SQLite) para análises futuras.
 
 ##### Tecnologias utilizadas:
