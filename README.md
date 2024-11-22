@@ -4,12 +4,17 @@ Repositorio com o objetivo de conter os codigos para realizar a extração trans
 ## Ideia inicial do Projeto
 Tema: Análise de tendências musicais.
 
-ETL:
-Extract:
-Use a SerpApi para buscar notícias sobre artistas populares.
-Use a API do Spotify para coletar dados de músicas (nome, popularidade, gêneros).
-Transform:
-Relacione artistas populares com as músicas mais tocadas no Spotify.
-Extraia insights, como gêneros em alta ou artistas mencionados nas notícias.
-Load:
-Salve em um banco (PostgreSQL ou SQLite) para análises futuras.
+### ETL:
+
+### Extract:
+> Use a SerpApi para buscar notícias sobre artistas populares.
+> Use a API do Spotify para coletar dados de músicas (nome, popularidade, gêneros).
+
+#### Transform:
+> Relacione artistas populares com as músicas mais tocadas no Spotify.
+> Extraia insights, como gêneros em alta ou artistas mencionados nas notícias.
+
+####Load:
+> Salve em um banco (PostgreSQL ou SQLite) para análises futuras.
+
+##### Tecnologias utilizadas:
