@@ -18,3 +18,8 @@ Tema: Análise de tendências musicais.
 > Salve em um banco (PostgreSQL ou SQLite) para análises futuras.
 
 ##### Tecnologias utilizadas:
+
+###### Comandos utilizados
+docker build -t projeto_etl_getffari . - Construindo/atualizando o container
+docker run projeto_etl_getffari - Executando o containe
+docker-compose up -d - Subindo os containers do docker-compose

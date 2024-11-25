@@ -46,3 +46,4 @@ if response.status_code == 200:
     print("Álbum:", track_data['album']['name'])
 else:
     print(f"Erro na requisição: {response.status_code}")
+    

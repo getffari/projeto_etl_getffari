@@ -5,10 +5,10 @@ FROM python:3.8-slim
 WORKDIR /app
 
 # Copiando o arquivo de script para o container
-COPY main.py /app
+COPY test_api_serpapi.py /app
 
 # Instalando dependências (se houver)
 RUN pip install --no-cache-dir requests
 
 # Definindo o comando que será executado ao rodar o container
-CMD ["python", "main.py"]
+CMD ["python", "test_api_serpapi.py"]
