@@ -6,8 +6,13 @@ def test_serpapi(api_key, query):
 
     # Parâmetros de pesquisa (os parâmetros podem variar dependendo da pesquisa que você deseja fazer)
     params = {
-        'q': "Steve Wonder",  # O termo de pesquisa
-        'api_key': "#"  # Sua chave de API(https://serpapi.com/manage-api-key)
+        "api_key": "04c3691ab23fed5b5531d351bac30b711425995476a25af730f6f8ddb3876d55",
+        "engine": "google",
+        "q": "Músicas mais tocadas de 2024",
+        "location": "Porto Alegre, State of Rio Grande do Sul, Brazil",
+        "google_domain": "google.com.br",
+        "gl": "br",
+        "hl": "pt"
     }
 
     # Fazendo a requisição GET para a API da SerpApi

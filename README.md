@@ -20,6 +20,12 @@ Tema: Análise de tendências musicais.
 ##### Tecnologias utilizadas:
 
 ###### Comandos utilizados
-docker build -t projeto_etl_getffari . - Construindo/atualizando o container
-docker run projeto_etl_getffari - Executando o containe
-docker-compose up -d - Subindo os containers do docker-compose
+- Construindo/atualizando o container
+    docker build -t projeto_etl_getffari . 
+- Executando o containe
+    docker run projeto_etl_getffari 
+- Subindo os containers do docker-compose
+    docker-compose up -d 
+- Verificando container de pé
+    docker ps
+
