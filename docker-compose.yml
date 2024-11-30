@@ -75,13 +75,6 @@ services:
     volumes:
       - superset-data:/var/lib/superset
 
-  webscraper:
-    image: python:3.9
-    container_name: webscraper
-    volumes:
-      - ./webscraper:/app
-    working_dir: /app
-    command: python scraper.py
 
 volumes:
   minio-data:
