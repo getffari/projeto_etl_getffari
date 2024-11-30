@@ -46,4 +46,10 @@ if response.status_code == 200:
     print("Álbum:", track_data['album']['name'])
 else:
     print(f"Erro na requisição: {response.status_code}")
-    
+ 
+books = []
+for article in articles:
+  title = article.h3.a['title']
+  price = article.find('p', class_='price_color').text
+  availability = article.find('p', class_='instock availability').text.strip()
+  rating = article.find('p', class_='star-rating')['class'][1]   

@@ -5,10 +5,10 @@ FROM python:3.8-slim
 WORKDIR /app
 
 # Copiando o arquivo de script para o container
-COPY test_api_serpapi.py /app
+COPY test_web_scraping.py .
 
 # Instalando dependências (se houver)
-RUN pip install --no-cache-dir requests
+RUN pip install --no-cache-dir requests beautifulsoup4 pandas
 
 # Definindo o comando que será executado ao rodar o container
-CMD ["python", "test_api_serpapi.py"]
+CMD ["python", "test_web_scraping.py"]
