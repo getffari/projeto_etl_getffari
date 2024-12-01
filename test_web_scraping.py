@@ -1,3 +1,4 @@
+import re
 from bs4 import BeautifulSoup
 import pandas as pd
 import requests
@@ -12,6 +13,9 @@ if response.status_code == 200:
     # Analisando o HTML da página
     soup = BeautifulSoup(response.text, 'html.parser')
 
+    # Encontrando todos os itens <li> dentro do <ol>
+    li_items = soup.find_all('li')
+
     # Abrir o arquivo CSV
     with open('musicas.csv', 'w', newline='', encoding='utf-8') as csvfile:
         fieldnames = ['Música', 'Artista', 'Gravadora']
@@ -20,25 +24,31 @@ if response.status_code == 200:
         # Escrever cabeçalho
         writer.writeheader()
         
-        # Encontrar todos os itens da lista <li>
-        for li in soup.find_all('li'):
+        # Iterando sobre cada item <li>
+        for li in li_items:
             # Extrair os dados de cada item
             text = li.get_text(strip=True)
-            
-            # Dividir a string para separar música, artista e gravadora
-            try:
-                music, artists_and_label = text.split(" – ", 1)
-                artists, label = artists_and_label.rsplit(" – ", 1)
-                
-                # Escrever no CSV
-                writer.writerow({'Música': music, 'Artista': artists, 'Gravadora': label})
-            except ValueError:
-                # Caso algum item não tenha o formato esperado, ignoramos
-                continue
 
-    print("CSV criado com sucesso!")
+             # Separando a string usando "–" como delimitador
+            parts = re.split(r" – |-", text)
+
+            if len(parts) == 3:
+                musica = parts[0]
+                artistas = parts[1]
+                gravadora = parts[2]
+
+                # Escrever no CSV
+                writer.writerow({'Música': musica, 'Artista': artistas, 'Gravadora': gravadora})
+            elif len(parts) > 3:
+                musica = f"{parts[0]}-{parts[1]}"
+                artistas = parts[2]
+                gravadora = parts[3]
+
+                # Escrever no CSV
+                writer.writerow({'Música': musica, 'Artista': artistas, 'Gravadora': gravadora})
             
-          
+
+    print("CSV criado com sucesso!")     
 else:
     print("Erro ao acessar a página")
 
