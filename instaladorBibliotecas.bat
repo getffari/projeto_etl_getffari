@@ -3,4 +3,5 @@
 call venv\Scripts\activate
 pip install requests
 pip install pandas
+pip install minio
 
