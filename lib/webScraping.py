@@ -5,6 +5,8 @@ import csv
 from minio import Minio
 from minio.error import S3Error
 
+from minioBucket import MinioBucket
+
 URL = "https://maistocadas.mus.br/musicas-mais-tocadas/"
 HEADERS = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"}
 
@@ -34,27 +36,15 @@ def write_csv(data, filename):
         for row in data:
             writer.writerow(row)
 
-def upload_to_minio(client, bucket_name, object_name, file_path):
-    client.fput_object(bucket_name, object_name, file_path)
-    print(f"Arquivo '{object_name}' enviado para o bucket '{bucket_name}' com sucesso!")
-
 def main():
     html = fetch_page(URL, HEADERS)
     texts = parse_html(html)
     data = [extract_data(text) for text in texts if extract_data(text) is not None]
     write_csv(data, 'musicas.csv')
+    minioBuket = MinioBucket()
 
-    client = Minio(
-        "localhost:9000",
-        access_key="minioadmin",
-        secret_key="minioadmin123",
-        secure=False
-    )
+    minioBuket.upload_to_minio("bruto", "musicas.csv", "musicas.csv")
 
-    try:
-        upload_to_minio(client, "bruto", "musicas.csv", "musicas.csv")
-    except S3Error as e:
-        print(f"Erro ao enviar o arquivo: {e}")
 
 if __name__ == "__main__":
     main()
