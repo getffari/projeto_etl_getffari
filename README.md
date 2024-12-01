@@ -29,3 +29,7 @@ Tema: Análise de tendências musicais.
 - Verificando container de pé
     docker ps
 
+
+    id track eu consigo no search
+    id do artista eu consigo no track
+

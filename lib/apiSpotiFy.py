@@ -1,6 +1,9 @@
 import requests
+import csv
 import base64
 from minioBucket import MinioBucket
+from minio import Minio
+from minio.error import S3Error
 
 class ApiSpotify:
     _instance = None
@@ -47,6 +50,16 @@ class ApiSpotify:
         if results["tracks"]["items"]:
             return results["tracks"]["items"][0]["id"]
         return None
+    
+    def get_artist(self, id):
+        
+        headers = {
+            "Authorization": f"Bearer {self.access_token}"
+        }
+        SPOTIFY_API_URL = f"https://api.spotify.com/v1/artists/{id}"
+        
+        response = requests.get(SPOTIFY_API_URL, headers=headers)
+        return response.json()
 
     def get_track_data(self, track_id):
         headers = {
@@ -59,6 +72,22 @@ class ApiSpotify:
     def get_tracks_data(self, track_names):
         track_ids = [self.search_track_id(name) for name in track_names]
         return [self.get_track_data(track_id) for track_id in track_ids if track_id]
+    
+    def get_artist_data(self, tracks):
+        
+        artist_ids = []
+        artists_list = []
+        for track in tracks:
+            artist_ids = [artist["id"] for artist in track["artists"]]
+            
+            for artist_id in artist_ids:
+                artists_list.append(self.get_artist(artist_id)) # Chama o método get_artist
+
+        #print(artists_list)
+        
+        return artists_list
+    
+        #return [self.get_track_data(track_id) for track_id in track_ids if track_id]
 
     def extract_track_info(self, track_data):
         return {
@@ -67,9 +96,22 @@ class ApiSpotify:
             "artists": [artist["name"] for artist in track_data["artists"]],
             "release_date": track_data["album"]["release_date"]
         }
+        
+    def extract_artist_info(self, artist_data):
+        
+        return {
+            "name": artist_data["name"],
+            "genres": artist_data["genres"],
+            "popularity": artist_data["popularity"],
+            "followers": f"{artist_data["followers"]["total"]:,.0f}".replace(",", ".")
+
+        }
 
     def process_tracks_data(self, tracks_data):
         return [self.extract_track_info(track_data) for track_data in tracks_data]
+    
+    def process_artists_data(self, artists_data):
+        return [self.extract_artist_info(artist_data) for artist_data in artists_data]
 
     def get_music_list(self, bucket_name, object_name):
         minioBuket = MinioBucket()
@@ -82,6 +124,43 @@ class ApiSpotify:
             return music_list
         else:
             return []
+        
+    def write_csv_tracks(self, data, filename):
+        # Abrir o arquivo CSV para escrita
+        with open('track.csv', mode='w', newline='', encoding='utf-8') as file:
+            # Definir os nomes das colunas (headers)
+            fieldnames = ['name', 'album', 'artists', 'release_date']
+            
+            # Criar um escritor de CSV com delimitador ';'
+            writer = csv.DictWriter(file, fieldnames=fieldnames, delimiter=';')
+            
+            # Escrever o cabeçalho
+            writer.writeheader()
+            
+            # Escrever os dados
+            for row in data:
+                # Garantir que a lista de 'artists' seja uma string separada por vírgulas
+                row['artists'] = ', '.join(row['artists'])
+                writer.writerow(row)
+                
+    def write_csv_artists(self, data, filename):
+        # Abrir o arquivo CSV para escrita
+        with open('artists.csv', mode='w', newline='', encoding='utf-8') as file:
+            # Definir os nomes das colunas (headers)
+            fieldnames = ['name', 'genres', 'popularity', 'followers']
+            
+            # Criar um escritor de CSV com delimitador ';'
+            writer = csv.DictWriter(file, fieldnames=fieldnames, delimiter=';')
+            
+            # Escrever o cabeçalho
+            writer.writeheader()
+            
+            # Escrever os dados
+            for row in data:
+                # Garantir que a lista de 'genres' seja uma string separada por vírgulas
+                row['genres'] = ', '.join(row['genres'])
+                writer.writerow(row)
+
 
 if __name__ == "__main__":
     # Crie uma instância da classe ApiSpotify
@@ -92,9 +171,29 @@ if __name__ == "__main__":
 
     # Obter dados da lista de músicas
     tracks_data = api_spotify.get_tracks_data(music_list)
-
+    
     # Processar e extrair informações específicas dos dados das músicas
     processed_tracks_data = api_spotify.process_tracks_data(tracks_data)
+    
+    # Criando CSV
+    api_spotify.write_csv_tracks(processed_tracks_data, 'track.csv')
+    
+    minioBuket = MinioBucket()
 
-    # Imprimir as informações extraídas
-    print(processed_tracks_data)
+    # Enviando para camada refinada
+    
+    minioBuket.upload_to_minio("refinado", "track.csv", "track.csv")
+    
+    # Obter dados dos artistas de músicas
+    artists_data = api_spotify.get_artist_data(tracks_data)
+    
+    # Processar e extrair informações específicas dos dados das músicas
+    processed_artist_data = api_spotify.process_artists_data(artists_data)
+    
+    # Criando CSV
+    api_spotify.write_csv_artists(processed_artist_data, 'tracks.csv')
+    
+    minioBuket = MinioBucket()
+
+    # Enviando para camada refinada
+    minioBuket.upload_to_minio("refinado", "artists.csv", "artists.csv")
