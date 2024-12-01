@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import pandas as pd
 import requests
+import csv
 
 URL = "https://maistocadas.mus.br/musicas-mais-tocadas/"
 HEADERS = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"}
@@ -10,39 +11,34 @@ response = requests.get(URL, headers=HEADERS)
 if response.status_code == 200:
     # Analisando o HTML da página
     soup = BeautifulSoup(response.text, 'html.parser')
-    
-    # Encontrando todos os itens <li> dentro do <ol>
-    li_items = soup.find_all('li')
-    
-    # Lista para armazenar os dados extraídos
-    data = []
 
-    # Iterando sobre cada item <li>
-    for item in li_items:
-        # Limpando o texto
-        text = item.get_text(strip=True)
+    # Abrir o arquivo CSV
+    with open('musicas.csv', 'w', newline='', encoding='utf-8') as csvfile:
+        fieldnames = ['Música', 'Artista', 'Gravadora']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=';')
         
-        # Separando a string usando "–" como delimitador
-        parts = text.split(" – ")
+        # Escrever cabeçalho
+        writer.writeheader()
         
-        # Garantindo que a separação tenha 3 partes (Música, Artista(s), Gravadora)
-        if len(parts) == 3:
-            musica = parts[0]
-            artistas = parts[1]
-            gravadora = parts[2]
+        # Encontrar todos os itens da lista <li>
+        for li in soup.find_all('li'):
+            # Extrair os dados de cada item
+            text = li.get_text(strip=True)
             
-            # Adicionando os dados na lista
-            data.append({'Música': musica, 'Artistas': artistas, 'Gravadora': gravadora})
+            # Dividir a string para separar música, artista e gravadora
+            try:
+                music, artists_and_label = text.split(" – ", 1)
+                artists, label = artists_and_label.rsplit(" – ", 1)
+                
+                # Escrever no CSV
+                writer.writerow({'Música': music, 'Artista': artists, 'Gravadora': label})
+            except ValueError:
+                # Caso algum item não tenha o formato esperado, ignoramos
+                continue
 
-            # Criando um DataFrame com os dados extraídos
-            df = pd.DataFrame(data)
-
-            # Salvando o DataFrame em um arquivo CSV
-            df.to_csv('./app/musicas.csv', index=False, encoding='utf-8')
-
-    print("oi2")
-
+    print("CSV criado com sucesso!")
             
+          
 else:
     print("Erro ao acessar a página")
 
