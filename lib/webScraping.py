@@ -23,14 +23,14 @@ def parse_html(html):
 def extract_data(text):
     parts = re.split(r" – |-", text)
     if len(parts) == 3:
-        return {'Música': parts[0], 'Artista': parts[1], 'Gravadora': parts[2]}
+        return {'Musica': parts[0], 'Artista': parts[1], 'Gravadora': parts[2]}
     elif len(parts) > 3:
-        return {'Música': f"{parts[0]}-{parts[1]}", 'Artista': parts[2], 'Gravadora': parts[3]}
+        return {'Musica': f"{parts[0]}-{parts[1]}", 'Artista': parts[2], 'Gravadora': parts[3]}
     return None
 
 def write_csv(data, filename):
     with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['Música', 'Artista', 'Gravadora']
+        fieldnames = ['Musica', 'Artista', 'Gravadora']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=';')
         writer.writeheader()
         for row in data[:3]:

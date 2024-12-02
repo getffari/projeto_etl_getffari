@@ -117,7 +117,7 @@ class ApiSpotify:
         if csv_content is not None:
             music_list = []
             for index, row in csv_content.iterrows():
-                music = row['Música']
+                music = row['Musica']
                 music_list.append(music)
             return music_list
         else:
@@ -164,13 +164,13 @@ if __name__ == "__main__":
     # Crie uma instância da classe ApiSpotify
     api_spotify = ApiSpotify()
 
-    # Lista de nomes de músicas de exemplo
+    # Lista de nomes de Musicas de exemplo
     music_list = api_spotify.get_music_list("bruto", "musicas.csv")
 
-    # Obter dados da lista de músicas
+    # Obter dados da lista de Musicas
     tracks_data = api_spotify.get_tracks_data(music_list)
     
-    # Processar e extrair informações específicas dos dados das músicas
+    # Processar e extrair informações específicas dos dados das Musicas
     processed_tracks_data = api_spotify.process_tracks_data(tracks_data)
     
     # Criando CSV
@@ -182,10 +182,10 @@ if __name__ == "__main__":
     
     minioBuket.upload_to_minio("refinado", "track.csv", "track.csv")
     
-    # Obter dados dos artistas de músicas
+    # Obter dados dos artistas de Musicas
     artists_data = api_spotify.get_artist_data(tracks_data)
     
-    # Processar e extrair informações específicas dos dados das músicas
+    # Processar e extrair informações específicas dos dados das Musicas
     processed_artist_data = api_spotify.process_artists_data(artists_data)
     
     # Criando CSV
