@@ -75,19 +75,17 @@ class ApiSpotify:
     
     def get_artist_data(self, tracks):
         
-        artist_ids = []
+        artist_ids = set()
         artists_list = []
         for track in tracks:
-            artist_ids = [artist["id"] for artist in track["artists"]]
+            for artist in track["artists"]:
+                artist_ids.add(artist["id"])
             
-            for artist_id in artist_ids:
-                artists_list.append(self.get_artist(artist_id)) # Chama o método get_artist
-
-        #print(artists_list)
+        for artist_id in artist_ids:
+            artists_list.append(self.get_artist(artist_id)) # Chama o método get_artist
         
         return artists_list
     
-        #return [self.get_track_data(track_id) for track_id in track_ids if track_id]
 
     def extract_track_info(self, track_data):
         return {
