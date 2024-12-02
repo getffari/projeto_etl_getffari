@@ -1,4 +1,4 @@
 @REM Esse apaga os volumes
-@REM docker-compose down -v
+docker-compose down -v
 @REM Esse não
-docker-compose down
+@REM docker-compose down

@@ -33,7 +33,7 @@ def write_csv(data, filename):
         fieldnames = ['Música', 'Artista', 'Gravadora']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=';')
         writer.writeheader()
-        for row in data:
+        for row in data[:3]:
             writer.writerow(row)
 
 def main():

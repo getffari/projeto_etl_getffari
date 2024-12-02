@@ -25,57 +25,5 @@ services:
       mc mb myminio/refinado
       "
 
-  # trino-coordinator:
-  #   container_name: trino
-  #   image: trinodb/trino:425
-  #   hostname: trino-coordinator
-  #   environment:
-  #     - TRINO_ENVIRONMENT=production
-  #   ports:
-  #     - 8085:8080
-  #   depends_on:
-  #     - minio-mc
-  #   volumes:
-  #     - ./config_trino:/etc/trino
-
-  # trino-worker:
-  #   image: trinodb/trino:425
-  #   container_name: trino-worker
-  #   hostname: trino-worker
-  #   environment:
-  #     - TRINO_ENVIRONMENT=production
-  #     - TRINO_DISCOVERY_URI=http://trino-coordinator:8080
-  #   depends_on:
-  #     - trino-coordinator
-  #   volumes:
-  #     - ./config_trino:/etc/trino
-
-  # trino-init:
-  #   image: trinodb/trino:latest
-  #   depends_on:
-  #     - trino-coordinator
-  #   entrypoint:
-  #     [
-  #       "/bin/sh",
-  #       "-c",
-  #       "sleep 30 && trino --server trino-coordinator:8080 -f /docker-entrypoint-initdb.d/create_schemas.sql",
-  #     ]
-  #   volumes:
-  #     - ./init_trino/create_schemas.sql:/docker-entrypoint-initdb.d/create_schemas.sql
-
-  # superset:
-  #   image: apache/superset
-  #   container_name: superset
-  #   ports:
-  #     - "8088:8088"
-  #   environment:
-  #     SUPERSET_ENV: production
-  #     SUPERSET_LOAD_EXAMPLES: "no"
-  #     SUPERSET_SECRET_KEY: "your_secret_key"
-  #   volumes:
-  #     - superset-data:/var/lib/superset
-
 volumes:
   minio-data:
-  # trino-data:
-  # superset-data:
