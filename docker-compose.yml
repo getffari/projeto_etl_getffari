@@ -35,6 +35,7 @@ services:
       - 8085:8080
     depends_on:
       - minio-mc
+      - hive-metastore
     volumes:
       - ./config_trino:/etc/trino
 
@@ -53,8 +54,9 @@ services:
   trino-init:
     image: trinodb/trino:latest
     depends_on:
+      - trino-worker
       - trino-coordinator
-    entrypoint: [ "/bin/sh", "-c", "sleep 30 && trino --server trino-coordinator:8080 -f /docker-entrypoint-initdb.d/create_schemas.sql" ]
+    entrypoint: [ "/bin/sh", "-c", "sleep 45 && trino --server trino-coordinator:8080 -f /docker-entrypoint-initdb.d/create_schemas.sql" ]
     volumes:
       - ./init_trino/create_schemas.sql:/docker-entrypoint-initdb.d/create_schemas.sql
 
