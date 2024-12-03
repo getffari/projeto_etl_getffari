@@ -1,11 +1,9 @@
 import re
 from bs4 import BeautifulSoup
 import requests
-import csv
-from minio import Minio
-from minio.error import S3Error
 
 from apiSpotiFy import ApiSpotify
+from until import *
 from minioBucket import MinioBucket
 
 URL = "https://maistocadas.mus.br/musicas-mais-tocadas/"
@@ -29,13 +27,6 @@ def extract_data(text):
         return {'musica': f"{parts[0]}-{parts[1]}", 'artista': parts[2], 'gravadora': parts[3]}
     return None
 
-def write_csv(data, filename, fieldNames):
-    with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
-        fieldnames = fieldNames
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=';')
-        writer.writeheader()
-        for row in data:
-            writer.writerow(row)
 
 def music_list_with_track_id():
     minioBuket = MinioBucket()

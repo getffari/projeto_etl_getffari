@@ -2,8 +2,8 @@ import requests
 import csv
 import base64
 from minioBucket import MinioBucket
-from minio import Minio
-from minio.error import S3Error
+
+from until import *
 
 class ApiSpotify:
     _instance = None
@@ -69,9 +69,12 @@ class ApiSpotify:
         response = requests.get(SPOTIFY_API_URL, headers=headers)
         return response.json()
 
-    def get_tracks_data(self, track_names):
-        track_ids = [self.search_track_id(name) for name in track_names]
-        return [self.get_track_data(track_id) for track_id in track_ids if track_id]
+    def get_tracks_data(self, track_ids):
+        tracks_data = []
+        for track_id in track_ids:
+            tracks_data.append(self.get_track_data(track_id))
+            
+        return tracks_data
     
     def get_artist_data(self, tracks):
         
@@ -89,6 +92,7 @@ class ApiSpotify:
 
     def extract_track_info(self, track_data):
         return {
+            "trackId": track_data["id"],
             "name": track_data["name"],
             "album": track_data["album"]["name"],
             "artists": [artist["name"] for artist in track_data["artists"]],
@@ -111,15 +115,15 @@ class ApiSpotify:
     def process_artists_data(self, artists_data):
         return [self.extract_artist_info(artist_data) for artist_data in artists_data]
 
-    def get_music_list(self, bucket_name, object_name):
+    def get_track_id_list(self):
         minioBuket = MinioBucket()
-        csv_content = minioBuket.get_csv_content(bucket_name, object_name)
+        csv_content = minioBuket.get_csv_content("refinado", "musicas/musicas.csv")
         if csv_content is not None:
-            music_list = []
+            track_id_list = []
             for index, row in csv_content.iterrows():
-                music = row['Musica']
-                music_list.append(music)
-            return music_list
+                trackId = row['trackId']
+                track_id_list.append(trackId)
+            return track_id_list
         else:
             return []
         
@@ -163,24 +167,22 @@ class ApiSpotify:
 if __name__ == "__main__":
     # Crie uma instância da classe ApiSpotify
     api_spotify = ApiSpotify()
+    minioBuket = MinioBucket()
 
     # Lista de nomes de Musicas de exemplo
-    music_list = api_spotify.get_music_list("bruto", "musicas.csv")
+    track_id_list = api_spotify.get_track_id_list()
 
     # Obter dados da lista de Musicas
-    tracks_data = api_spotify.get_tracks_data(music_list)
+    tracks_data = api_spotify.get_tracks_data(track_id_list)
     
     # Processar e extrair informações específicas dos dados das Musicas
     processed_tracks_data = api_spotify.process_tracks_data(tracks_data)
     
     # Criando CSV
-    api_spotify.write_csv_tracks(processed_tracks_data, 'track.csv')
+    write_csv(processed_tracks_data, 'refinado/trackData.csv', ["trackId", "name", "album", "artists", "release_date"])
     
-    minioBuket = MinioBucket()
-
     # Enviando para camada refinada
-    
-    minioBuket.upload_to_minio("refinado", "track.csv", "track.csv")
+    minioBuket.upload_to_minio("refinado", "trackData", "trackData.csv", "refinado/trackData.csv")
     
     # Obter dados dos artistas de Musicas
     artists_data = api_spotify.get_artist_data(tracks_data)
@@ -189,9 +191,7 @@ if __name__ == "__main__":
     processed_artist_data = api_spotify.process_artists_data(artists_data)
     
     # Criando CSV
-    api_spotify.write_csv_artists(processed_artist_data, 'tracks.csv')
+    write_csv(processed_artist_data, "refinado/artistsData.csv", ['name', 'genres', 'popularity', 'followers'])
     
-    minioBuket = MinioBucket()
-
     # Enviando para camada refinada
-    minioBuket.upload_to_minio("refinado", "artists.csv", "artists.csv")
+    minioBuket.upload_to_minio("refinado", "artistsData", "artistsData.csv", "refinado/artistsData.csv")

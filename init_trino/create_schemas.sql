@@ -18,7 +18,7 @@ with (
 
 create table if not exists 
 	minio.refinado.musicas (
-		trackId VARCHAR,
+		trackDataId VARCHAR,
 		musica VARCHAR,
 		artista VARCHAR,
 		gravadora VARCHAR
@@ -32,14 +32,15 @@ with (
 ;
 
 create table if not exists 
-	minio.refinado.track (
+	minio.refinado.trackData (
+		trackDataId VARCHAR,
 		name VARCHAR,
 		album VARCHAR,
-		artists VARCHAR,
+		artistsData VARCHAR,
 		release_date VARCHAR
 	) 
 with (
-	    external_location = 's3a://refinado/track',
+	    external_location = 's3a://refinado/trackData',
 	    format = 'CSV',
 	    skip_header_line_count=1,
 		csv_separator = ';'
@@ -47,14 +48,14 @@ with (
 ;
 
 create table if not exists 
-	minio.refinado.artists (
+	minio.refinado.artistsData (
 		name VARCHAR,
 		genres VARCHAR,
 		popularity VARCHAR,
 		followers VARCHAR
 	) 
 with (
-	    external_location = 's3a://refinado/artists',
+	    external_location = 's3a://refinado/artistsData',
 	    format = 'CSV',
 	    skip_header_line_count=1,
 		csv_separator = ';'
