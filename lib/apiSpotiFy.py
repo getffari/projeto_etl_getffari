@@ -191,6 +191,33 @@ class ApiSpotify:
             write_csv(artists_by_track_data_id, "refinado/artistByTrackId.csv", ["trackId", "artist"])
             minioBuket.upload_to_minio("refinado", "artistByTrackId", "artistByTrackId.csv", "refinado/artistByTrackId.csv")
 
+    def normatize_artists_data(sefl):
+        minioBuket = MinioBucket()
+        csv_content = minioBuket.get_csv_content("bruto", "artistsData/artistsData.csv")
+        if csv_content is not None:
+            artists_data = []
+            genres_by_artist = []
+            for index, row in csv_content.iterrows():
+                new_artists_data = {
+                    "name": row["name"],
+                    "popularity": row["popularity"],
+                    "followers": row["followers"],
+                }
+                artists_data.append(new_artists_data)
+                genres = ast.literal_eval(row["genres"])
+                for genre in genres:
+                    genre_by_artist_line = {
+                        "artistName": row["name"],
+                        "genre": genre
+                    }
+                    genres_by_artist.append(genre_by_artist_line)
+
+            write_csv(artists_data, "refinado/artistsData.csv", ["name", "popularity", "followers"])
+            minioBuket.upload_to_minio("refinado", "artistsData", "artistsData.csv", "refinado/artistsData.csv")
+
+            write_csv(genres_by_artist, "refinado/genresByArtist.csv", ["artistName", "genre"])
+            minioBuket.upload_to_minio("refinado", "genresByArtist", "genresByArtist.csv", "refinado/genresByArtist.csv")
+
 
 if __name__ == "__main__":
     # Crie uma instância da classe ApiSpotify
@@ -225,3 +252,5 @@ if __name__ == "__main__":
     minioBuket.upload_to_minio("bruto", "artistsData", "artistsData.csv", "bruto/artistsData.csv")
 
     api_spotify.normatize_track_data()
+
+    api_spotify.normatize_artists_data()
