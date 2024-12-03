@@ -40,7 +40,7 @@ create table if not exists
 		release_date VARCHAR
 	) 
 with (
-	    external_location = 's3a://refinado/trackData',
+	    external_location = 's3a://bruto/trackData',
 	    format = 'CSV',
 	    skip_header_line_count=1,
 		csv_separator = ';'
@@ -55,7 +55,7 @@ create table if not exists
 		followers VARCHAR
 	) 
 with (
-	    external_location = 's3a://refinado/artistsData',
+	    external_location = 's3a://bruto/artistsData',
 	    format = 'CSV',
 	    skip_header_line_count=1,
 		csv_separator = ';'

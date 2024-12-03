@@ -1,6 +1,7 @@
 import requests
 import csv
 import base64
+import ast
 from minioBucket import MinioBucket
 
 from until import *
@@ -163,6 +164,33 @@ class ApiSpotify:
                 row['genres'] = ', '.join(row['genres'])
                 writer.writerow(row)
 
+    def normatize_track_data(sefl):
+        minioBuket = MinioBucket()
+        csv_content = minioBuket.get_csv_content("bruto", "trackData/trackData.csv")
+        if csv_content is not None:
+            tracks_data = []
+            artists_by_track_data_id = []
+            for index, row in csv_content.iterrows():
+                new_track_data = {
+                    "trackId": row["trackId"],
+                    "name": row["name"],
+                    "album": row["album"],
+                    "release_date": row["release_date"]
+                }
+                tracks_data.append(new_track_data)
+                artists = ast.literal_eval(row["artists"])
+                for artist in artists:
+                    artists_by_track_data_id_line = {
+                        "trackId": row["trackId"],
+                        "artist": artist
+                    }
+                    artists_by_track_data_id.append(artists_by_track_data_id_line)
+
+            write_csv(tracks_data, "refinado/trackData.csv", ["trackId", "name", "album", "release_date"])
+            minioBuket.upload_to_minio("refinado", "trackData", "trackData.csv", "refinado/trackData.csv")
+            write_csv(artists_by_track_data_id, "refinado/artistByTrackId.csv", ["trackId", "artist"])
+            minioBuket.upload_to_minio("refinado", "artistByTrackId", "artistByTrackId.csv", "refinado/artistByTrackId.csv")
+
 
 if __name__ == "__main__":
     # Crie uma instância da classe ApiSpotify
@@ -179,10 +207,10 @@ if __name__ == "__main__":
     processed_tracks_data = api_spotify.process_tracks_data(tracks_data)
     
     # Criando CSV
-    write_csv(processed_tracks_data, 'refinado/trackData.csv', ["trackId", "name", "album", "artists", "release_date"])
+    write_csv(processed_tracks_data, 'bruto/trackData.csv', ["trackId", "name", "album", "artists", "release_date"])
     
     # Enviando para camada refinada
-    minioBuket.upload_to_minio("refinado", "trackData", "trackData.csv", "refinado/trackData.csv")
+    minioBuket.upload_to_minio("bruto", "trackData", "trackData.csv", "bruto/trackData.csv")
     
     # Obter dados dos artistas de Musicas
     artists_data = api_spotify.get_artist_data(tracks_data)
@@ -191,7 +219,9 @@ if __name__ == "__main__":
     processed_artist_data = api_spotify.process_artists_data(artists_data)
     
     # Criando CSV
-    write_csv(processed_artist_data, "refinado/artistsData.csv", ['name', 'genres', 'popularity', 'followers'])
+    write_csv(processed_artist_data, "bruto/artistsData.csv", ['name', 'genres', 'popularity', 'followers'])
     
     # Enviando para camada refinada
-    minioBuket.upload_to_minio("refinado", "artistsData", "artistsData.csv", "refinado/artistsData.csv")
+    minioBuket.upload_to_minio("bruto", "artistsData", "artistsData.csv", "bruto/artistsData.csv")
+
+    api_spotify.normatize_track_data()
