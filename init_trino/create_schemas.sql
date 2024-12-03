@@ -4,12 +4,27 @@ create schema if not exists minio.refinado with (location = 's3a://refinado/');
         
 create table if not exists 
 	minio.bruto.musicas (
-		Musica VARCHAR,
-		Artista VARCHAR,
-		Gravadora VARCHAR
+		musica VARCHAR,
+		artista VARCHAR,
+		gravadora VARCHAR
 	) 
 with (
-	    external_location = 's3a://bruto/',
+	    external_location = 's3a://bruto/musicas',
+	    format = 'CSV',
+	    skip_header_line_count=1,
+		csv_separator = ';'
+    )
+;
+
+create table if not exists 
+	minio.refinado.musicas (
+		trackId VARCHAR,
+		musica VARCHAR,
+		artista VARCHAR,
+		gravadora VARCHAR
+	) 
+with (
+	    external_location = 's3a://refinado/musicas',
 	    format = 'CSV',
 	    skip_header_line_count=1,
 		csv_separator = ';'
@@ -24,7 +39,7 @@ create table if not exists
 		release_date VARCHAR
 	) 
 with (
-	    external_location = 's3a://refinado/',
+	    external_location = 's3a://refinado/track',
 	    format = 'CSV',
 	    skip_header_line_count=1,
 		csv_separator = ';'
@@ -39,7 +54,7 @@ create table if not exists
 		followers VARCHAR
 	) 
 with (
-	    external_location = 's3a://refinado/',
+	    external_location = 's3a://refinado/artists',
 	    format = 'CSV',
 	    skip_header_line_count=1,
 		csv_separator = ';'

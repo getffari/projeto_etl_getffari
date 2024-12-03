@@ -20,10 +20,11 @@ class MinioBucket:
             secure=False
         )
 
-    def upload_to_minio(self, bucket_name, object_name, file_path):
+    def upload_to_minio(self, bucket_name, folder_name, object_name, file_path):
         try:
-            self.client.fput_object(bucket_name, object_name, file_path)
-            print(f"Arquivo '{object_name}' enviado para o bucket '{bucket_name}' com sucesso!")
+            full_object_name = f"{folder_name}/{object_name}"
+            self.client.fput_object(bucket_name, full_object_name, file_path)
+            print(f"Arquivo '{object_name}' enviado para a pasta '{folder_name}' no bucket '{bucket_name}' com sucesso!")
         except S3Error as e:
             print(f"Erro ao enviar o arquivo: {e}")
 
