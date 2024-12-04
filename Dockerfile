@@ -1,14 +1,9 @@
-# Usando uma imagem base do Python
-FROM python:3.8-slim
-
-# Definindo o diretório de trabalho dentro do container
-WORKDIR /app
-
-# Copiando o arquivo de script para o container
-COPY test_web_scraping.py .
-
-# Instalando dependências (se houver)
-RUN pip install --no-cache-dir requests beautifulsoup4 pandas
-
-# Definindo o comando que será executado ao rodar o container
-CMD ["python", "test_web_scraping.py"]
+FROM apache/superset
+# Switching to root to install the required packages
+USER root
+# Example: installing the MySQL driver to connect to the metadata database
+# if you prefer Postgres, you may want to use `psycopg2-binary` instead
+# RUN pip install mysqlclient
+RUN pip install sqlalchemy-trino
+# Switching back to using the `superset` user
+USER superset

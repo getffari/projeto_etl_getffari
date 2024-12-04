@@ -30,6 +30,18 @@ Tema: Análise de tendências musicais.
     docker ps
 
 
-    id track eu consigo no search
-    id do artista eu consigo no track
+-- superset
+3- rodar os comandos abaixo no terminar 1 a 1:
+
+docker exec -it superset superset fab create-admin --username=admin --password=admin --firstname=admin --lastname=admin --email=admin@example.org
+docker exec -it superset superset db upgrade
+docker exec -it superset superset load_examples
+docker exec -it superset superset init
+
+#String de conexÃ¢o do Trino no Superset
+trino://admin@trino-coordinator:8080/minio
+
+
+
+
 

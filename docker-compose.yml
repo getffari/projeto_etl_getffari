@@ -85,5 +85,15 @@ services:
     depends_on:
       - mariadb
 
+  superset:
+    build: .
+    container_name: superset
+    ports:
+      - 8088:8088
+    volumes:
+      - ./superset-data:/app/superset_home
+    environment:
+      - SUPERSET_SECRET_KEY=123
+
 volumes:
   minio-data:
