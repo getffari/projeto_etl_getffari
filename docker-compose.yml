@@ -56,7 +56,7 @@ services:
     depends_on:
       - trino-worker
       - trino-coordinator
-    entrypoint: [ "/bin/sh", "-c", "sleep 45 && trino --server trino-coordinator:8080 -f /docker-entrypoint-initdb.d/create_schemas.sql" ]
+    entrypoint: [ "/bin/sh", "-c", "sleep 60 && trino --server trino-coordinator:8080 -f /docker-entrypoint-initdb.d/create_schemas.sql" ]
     volumes:
       - ./init_trino/create_schemas.sql:/docker-entrypoint-initdb.d/create_schemas.sql
 

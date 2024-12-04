@@ -35,6 +35,7 @@ Tema: Análise de tendências musicais.
 
 docker exec -it superset superset fab create-admin --username=admin --password=admin --firstname=admin --lastname=admin --email=admin@example.org
 docker exec -it superset superset db upgrade
+<!-- Opcional, só serve para carregar exemplos -->
 docker exec -it superset superset load_examples
 docker exec -it superset superset init
 

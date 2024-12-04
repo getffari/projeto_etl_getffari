@@ -116,4 +116,32 @@ with (
 		csv_separator = ';'
     )
 ;
+
+create schema if not exists minio.consulta with (location = 's3a://refinado/');
+
+create or replace view minio.consulta.view_musicas as
+	select
+		a.name as nome_musica
+		,a.album as album_musica
+		,a.release_date as data_lancamento
+		,b.gravadora
+		,c.artist as artista
+		,d.popularity as popularidade_artista
+		,d.followers as seguidores_artista
+		,e.genre as genero_artista
+	from
+		minio.refinado.trackdata as a
+	inner join
+		minio.refinado.musicas as b
+			on a.trackid = b.trackdataid
+	inner join
+		minio.refinado.artistbytrackid as c
+			on a.trackid = c.trackid
+	inner join
+		minio.refinado.artistsdata as d
+			on c.artist = d.name
+	left join
+		minio.refinado.genresbyartist as e
+			on c.artist = e.artistname
+;
     
