@@ -219,7 +219,7 @@ class ApiSpotify:
             minioBuket.upload_to_minio("refinado", "genresByArtist", "genresByArtist.csv", "refinado/genresByArtist.csv")
 
 
-if __name__ == "__main__":
+def main():
     # Crie uma instância da classe ApiSpotify
     api_spotify = ApiSpotify()
     minioBuket = MinioBucket()

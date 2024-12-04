@@ -57,7 +57,3 @@ def main():
     musicas_refinado = music_list_with_track_id()
     write_csv(musicas_refinado, 'refinado/musicas.csv', ['trackId', 'musica', 'artista', 'gravadora'])
     minioBuket.upload_to_minio("refinado", "musicas", "musicas.csv", "refinado/musicas.csv")
-
-
-if __name__ == "__main__":
-    main()
