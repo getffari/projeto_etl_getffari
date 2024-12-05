@@ -2,22 +2,29 @@
 Repositorio com o objetivo de conter os codigos para realizar a extração transformação e carregamento das api do Spotify e SerpApi 
 
 ## Ideia inicial do Projeto
-Tema: Análise de tendências musicais.
+Tema: Análise de tendências Artista e Generos Musicais.
 
 ### ETL:
 
 ### Extract:
-> Use a SerpApi para buscar notícias sobre artistas populares.
-> Use a API do Spotify para coletar dados de músicas (nome, popularidade, gêneros).
+> Use o site https://maistocadas.mus.br/musicas-mais-tocadas/ musicas e artistas mais populares de 2024
+> Use a API do Spotify para coletar dados de músicas (artistas, popularidade, gêneros).
 
 #### Transform:
-> Relacione artistas populares com as músicas mais tocadas no Spotify.
-> Extraia insights, como gêneros em alta ou artistas mencionados nas notícias.
+> Relacione musicasa popular com os artistas no spotify
+> Extraia insights, como gêneros em alta ou artistas.
 
 #### Load:
-> Salve em um banco (PostgreSQL ou SQLite) para análises futuras.
+> Salve em uma ambiente analitico para analise e criação de insights sobre o tema
 
 ##### Tecnologias utilizadas:
+- Arquivos.bat
+- Docker para o ambiente que vai suportar as outras aplicações
+- Python para o Web Scraping
+- API do Spotify
+- Minio para o armazenamento
+- Trino para a camada analitica
+- Super Set para criação de Dashboards e relatorios sobre o tema
 
 ###### Comandos utilizados
 - Construindo/atualizando o container
