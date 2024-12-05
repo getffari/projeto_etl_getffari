@@ -144,4 +144,43 @@ create or replace view minio.consulta.view_musicas as
 		minio.refinado.genresbyartist as e
 			on c.artist = e.artistname
 ;
+
+create or replace view minio.consulta.artista_por_gravadora as
+	select
+		a.gravadora
+		,count(b.artist) as "artistas que passaram"
+	from
+		minio.refinado.musicas as a
+	inner join
+		minio.refinado.artistbytrackid as b
+			on a.trackdataid = b.trackid
+	group by
+		a.gravadora
+;
+
+create or replace view minio.consulta.artista_mais_famoso_gravadora as
+	select
+		a.gravadora
+		,a.artist
+		,a.followers
+	from(
+			select
+				a.gravadora
+				,b.artist
+				,cast(round(cast(replace(c.followers, '.', '') as double)) as int) as followers
+				,row_number() over (partition by a.gravadora order by c.followers desc) as rn
+			from
+				minio.refinado.musicas as a
+			inner join
+				minio.refinado.artistbytrackid as b
+					on a.trackdataid = b.trackid
+			inner join 
+				minio.refinado.artistsdata as c
+					on b.artist = c.name
+		) as a
+	where
+		a.rn = 1
+	order by
+		a.followers desc
+;
     
